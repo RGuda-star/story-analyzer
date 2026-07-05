@@ -5,6 +5,7 @@ st.title("Story Analyzer")
 story = st.text_area("Paste your story idea here:")
 
 def analyze_story_features(text):
+    score = 50
     text = text.lower()
     punctuation = [".", ",", "!", "?", ":", ";"]
     for p in punctuation:
@@ -16,7 +17,11 @@ def analyze_story_features(text):
             word_counts[word] += 1
         else:
             word_counts[word] = 1
-    score = 50
+    
+    for word, count in word_counts.items():
+        if count > 10:
+            score -= 10
+    
 
     if text.count("the") > 20:
         score -= 10
