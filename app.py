@@ -5,6 +5,17 @@ st.title("Story Analyzer")
 story = st.text_area("Paste your story idea here:")
 
 def analyze_story_features(text):
+    text = text.lower()
+    punctuation = [".", ",", "!", "?", ":", ";"]
+    for p in punctuation:
+        text = text.replace(p, "")
+    words = text.split()
+    word_counts = {}
+    for word in words:
+        if word in word_counts:
+            word_counts[word] += 1
+        else:
+            word_counts[word] = 1
     score = 50
 
     if text.count("the") > 20:
@@ -20,7 +31,7 @@ def analyze_story_features(text):
     emotion_found = False
 
     for word in emotion_words:
-        if word in text:
+        if word in words:
             score += 2
             emotion_found = True
     
@@ -28,7 +39,7 @@ def analyze_story_features(text):
     conflict_found = False
 
     for word in conflict_words:
-        if word in text:
+        if word in words:
             score += 2
             conflict_found = True
     
