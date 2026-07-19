@@ -7,10 +7,22 @@ story = st.text_area("Paste your story idea here:")
 def analyze_story_features(text):
     score = 50
     text = text.lower()
+    sentences = text.split(".")
+    sentences = [s for s in sentences if s]
     punctuation = [".", ",", "!", "?", ":", ";"]
     for p in punctuation:
         text = text.replace(p, "")
     words = text.split()
+    if sentences:
+        average_sentence_length = len(words) / len(sentences)
+    else:
+        average_sentence_length = 0
+    unique_words = set(words)
+    unique_word_count = len(unique_words)
+    if words:
+        vocabulary_diversity = unique_word_count / len(words)
+    else:
+        vocabulary_diversity = 0
     word_counts = {}
     for word in words:
         if word in word_counts:
@@ -61,10 +73,13 @@ def analyze_story_features(text):
 
     features = {
         "word_count": len(words),
+        "unique_word_count": unique_word_count,
         "max_repetition": max(word_counts.values()),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
-        "the_count": text.count("the")
+        "the_count": text.count("the"),
+        "average_sentence_length": average_sentence_length,
+        "vocabulary_diversity": vocabulary_diversity
     }
 
 
@@ -76,6 +91,9 @@ if st.button("Analyze the Story"):
     else:
         score, strengths, suggestions, features = analyze_story_features(story)
         st.metric("Score", score)
+        st.write("Features:")
+        for name, value in features.items():
+            st.write(name + ":" + str(value))
         st.write("Strengths:")
         for s in strengths:
             st.write("- " + s)
