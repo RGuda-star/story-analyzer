@@ -59,14 +59,22 @@ def analyze_story_features(text):
     if conflict_found:
         suggestions.append("Strong conflict detected")
 
+    features = {
+        "word_count": len(words),
+        "max_repetition": max(word_counts.values()),
+        "emotion_found": emotion_found,
+        "conflict_found": conflict_found,
+        "the_count": text.count("the")
+    }
 
-    return score, strengths, suggestions
+
+    return score, strengths, suggestions, features
 
 if st.button("Analyze the Story"):
     if not story:
         st.warning("Please paste a story first.")
     else:
-        score, strengths, suggestions = analyze_story_features(story)
+        score, strengths, suggestions, features = analyze_story_features(story)
         st.metric("Score", score)
         st.write("Strengths:")
         for s in strengths:
