@@ -31,11 +31,16 @@ def extract_features(text, words, sentences):
         max_repetition = max(word_counts.values())
     else:
         max_repetition = 0
+    if sentences:
+        average_sentence_length = len(words) / len(sentences)
+    else:
+        average_sentence_length = 0
     features = {
         "unique_word_count": unique_word_count,
         "vocabulary_diversity": vocabulary_diversity,
         "max_repetition": max_repetition,
-        "word_counts": word_counts
+        "word_counts": word_counts,
+        "average_sentence_length": average_sentence_length
     }
 
     return features
@@ -114,18 +119,13 @@ def explain_score(features, emotion_found, conflict_found):
 def analyze_story_features(text):
     text, words, sentences = clean_text(text)
     features = extract_features(text, words, sentences)
-    if sentences:
-        average_sentence_length = len(words) / len(sentences)
-    else:
-        average_sentence_length = 0
     
     emotion_found, conflict_found = detect_story_elements(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
-        "the_count": text.count("the"),
-        "average_sentence_length": average_sentence_length
+        "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
     
