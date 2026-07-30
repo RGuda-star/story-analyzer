@@ -168,7 +168,16 @@ if st.button("Analyze the Story"):
         st.metric("Score", score)
         st.write("Features:")
         for name, value in features.items():
-            st.write(name + ":" + str(value))
+            if name == "characters":
+                st.write("Characters Detected:")
+        
+                for character in value["names"]:
+                    st.write("- " + character)
+
+                st.write("Total Characters:", value["count"])
+
+            else:
+                st.write(name + ":" + str(value))
         st.write("Strengths:")
         for s in strengths:
             st.write("- " + s)
