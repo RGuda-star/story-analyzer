@@ -67,11 +67,11 @@ def detect_conflict(words):
     return conflict_found
 character_names = ["raj", "arjun", "deva", "savita"]
 def detect_characters(words):
-    characters_found = []
+    characters_found = set()
 
     for word in words:
         if word in character_names:
-            characters_found.append(word)
+            characters_found.add(word)
 
     character_data = {
         "found": len(characters_found) > 0,
