@@ -45,7 +45,7 @@ def extract_features(text, words, sentences):
 
     return features
 
-def detect_story_elements(words):
+def detect_emotion(words):
     emotion_words = ["happy", "sad", "angry", "excited"]
     emotion_found = False
 
@@ -53,6 +53,10 @@ def detect_story_elements(words):
         if word in words:
             emotion_found = True
 
+    return emotion_found
+
+
+def detect_conflict(words):
     conflict_words = ["fight", "betray", "problem", "helpless"]
     conflict_found = False
 
@@ -60,7 +64,22 @@ def detect_story_elements(words):
         if word in words:
             conflict_found = True
 
-    return emotion_found, conflict_found
+    return conflict_found
+character_names = ["raj", "arjun", "deva", "savita"]
+def detect_characters(words):
+    characters_found = []
+
+    for word in words:
+        if word in character_names:
+            characters_found.append(word)
+
+    character_data = {
+        "found": len(characters_found) > 0,
+        "names": characters_found,
+        "count": len(characters_found)
+    }
+
+    return character_data
 
 def calculate_score(features, text, emotion_found, conflict_found):
     score = 50
@@ -120,11 +139,14 @@ def analyze_story_features(text):
     text, words, sentences = clean_text(text)
     features = extract_features(text, words, sentences)
     
-    emotion_found, conflict_found = detect_story_elements(words)
+    emotion_found= detect_emotion(words)
+    conflict_found = detect_conflict(words)
+    character_data = detect_characters(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
+        "characters": character_data,
         "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
