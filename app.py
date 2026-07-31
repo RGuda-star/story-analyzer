@@ -113,18 +113,45 @@ def detect_themes(words):
         "count": len(theme_found)
     }
     return theme_data
-def detect_story_elements(words):
+
+def detect_goals(words):
+    goal_keywords = {
+        "revenge": ["revenge", "avenge", "punish"],
+        "search": ["find", "search", "discover"],
+        "escape": ["escape", "run", "flee"],
+        "protection": ["save", "protect", "defend"],
+        "success": ["win", "achieve", "become"]
+    }
+
+    goals_found = set()
+
+    for word in words:
+        for goal, keywords in goal_keywords.items():
+            if word in keywords:
+                goals_found.add(goal)
+
+    goal_data = {
+        "found": len(goals_found) > 0,
+        "names": goals_found,
+        "count": len(goals_found)
+    }
+
+    return goal_data
+
+def detect_story_structure(words):
     character_data = detect_characters(words)
     setting_data = detect_settings(words)
     theme_data = detect_themes(words)
+    goal_data = detect_goals(words)
 
-    story_elements = {
+    story_structure = {
         "characters": character_data,
         "settings": setting_data,
-        "themes": theme_data
+        "themes": theme_data,
+        "goals": goal_data
     }
 
-    return story_elements
+    return story_structure
     
 
 def calculate_score(features, text, emotion_found, conflict_found):
@@ -187,12 +214,12 @@ def analyze_story_features(text):
     
     emotion_found= detect_emotion(words)
     conflict_found = detect_conflict(words)
-    story_elements = detect_story_elements(words)
+    story_structure = detect_story_structure(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
-        "story_elements": story_elements,
+        "story_structure": story_structure,
         "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
@@ -214,9 +241,9 @@ if st.button("Analyze the Story"):
         st.metric("Score", score)
         st.write("Features:")
         for name, value in features.items():
-            if name == "story_elements":
+            if name == "story_structure":
 
-                st.write("Story Elements:")
+                st.write("Story Structure:")
 
                 characters = value["characters"]
                 st.write("Characters Detected:")
@@ -243,6 +270,14 @@ if st.button("Analyze the Story"):
                     st.write("- " + theme)
 
                 st.write("Total Themes:", themes["count"])
+                goals = value["goals"]
+
+                st.write("Goals Detected:")
+
+                for goal in goals["names"]:
+                    st.write("- " + goal)
+
+                st.write("Total Goals:", goals["count"])
 
             else:
                 st.write(name + ":" + str(value))
