@@ -80,6 +80,19 @@ def detect_characters(words):
     }
 
     return character_data
+setting_names = ["london", "paris", "mumbai", "atlanta"]
+def detect_setting(words):
+    setting_found = set()
+    for word in words:
+        if word in setting_names:
+            setting_found.add(word)
+    setting_data = {
+        "found": len(setting_found) > 0,
+        "names": setting_found, 
+        "count": len(setting_found)
+
+    }
+    return setting_data
 
 def calculate_score(features, text, emotion_found, conflict_found):
     score = 50
@@ -142,11 +155,13 @@ def analyze_story_features(text):
     emotion_found= detect_emotion(words)
     conflict_found = detect_conflict(words)
     character_data = detect_characters(words)
+    setting_data = detect_setting(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
         "characters": character_data,
+        "settings": setting_data,
         "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
@@ -176,8 +191,17 @@ if st.button("Analyze the Story"):
 
                 st.write("Total Characters:", value["count"])
 
+            
+            elif name == "settings":
+                st.write("Settings Detected:")
+                for setting in value["names"]:
+                    st.write("- " + setting)
+
+                st.write("Total Settings:", value["count"])
+
             else:
                 st.write(name + ":" + str(value))
+        
         st.write("Strengths:")
         for s in strengths:
             st.write("- " + s)
