@@ -113,6 +113,18 @@ def detect_themes(words):
         "count": len(theme_found)
     }
     return theme_data
+def detect_story_elements(words):
+    character_data = detect_characters(words)
+    setting_data = detect_settings(words)
+    theme_data = detect_themes(words)
+
+    story_elements = {
+        "characters": character_data,
+        "settings": setting_data,
+        "themes": theme_data
+    }
+
+    return story_elements
     
 
 def calculate_score(features, text, emotion_found, conflict_found):
@@ -175,16 +187,12 @@ def analyze_story_features(text):
     
     emotion_found= detect_emotion(words)
     conflict_found = detect_conflict(words)
-    character_data = detect_characters(words)
-    setting_data = detect_settings(words)
-    theme_data = detect_themes(words)
+    story_elements = detect_story_elements(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
-        "characters": character_data,
-        "settings": setting_data,
-        "themes": theme_data,
+        "story_elements": story_elements,
         "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
@@ -206,28 +214,35 @@ if st.button("Analyze the Story"):
         st.metric("Score", score)
         st.write("Features:")
         for name, value in features.items():
-            if name == "characters":
+            if name == "story_elements":
+
+                st.write("Story Elements:")
+
+                characters = value["characters"]
                 st.write("Characters Detected:")
-        
-                for character in value["names"]:
+
+                for character in characters["names"]:
                     st.write("- " + character)
 
-                st.write("Total Characters:", value["count"])
+                st.write("Total Characters:", characters["count"])
 
-            
-            elif name == "settings":
+
+                settings = value["settings"]
                 st.write("Settings Detected:")
-                for setting in value["names"]:
+
+                for setting in settings["names"]:
                     st.write("- " + setting)
 
-                st.write("Total Settings:", value["count"])
+                st.write("Total Settings:", settings["count"])
 
-            elif name == "themes":
+
+                themes = value["themes"]
                 st.write("Themes Detected:")
-                for theme in value["names"]:
+
+                for theme in themes["names"]:
                     st.write("- " + theme)
 
-                st.write("Total Themes:", value["count"])
+                st.write("Total Themes:", themes["count"])
 
             else:
                 st.write(name + ":" + str(value))
