@@ -81,7 +81,7 @@ def detect_characters(words):
 
     return character_data
 setting_names = ["london", "paris", "mumbai", "atlanta"]
-def detect_setting(words):
+def detect_settings(words):
     setting_found = set()
     for word in words:
         if word in setting_names:
@@ -93,6 +93,27 @@ def detect_setting(words):
 
     }
     return setting_data
+
+def detect_themes(words):
+    theme_keywords = {
+    "revenge": ["enemy", "avenge", "nemesis"],
+    "family": ["mother", "father", "sibling"],
+    "friendship": ["friend", "companion", "ally"],
+    "sacrifice": ["surrender", "forgo", "leave"]
+    }
+    theme_found = set()
+    for word in words:
+        for theme, keywords in theme_keywords.items():
+            if word in keywords:
+                theme_found.add(theme)
+
+    theme_data = {
+        "found": len(theme_found)>0,
+        "names": theme_found,
+        "count": len(theme_found)
+    }
+    return theme_data
+    
 
 def calculate_score(features, text, emotion_found, conflict_found):
     score = 50
@@ -155,13 +176,15 @@ def analyze_story_features(text):
     emotion_found= detect_emotion(words)
     conflict_found = detect_conflict(words)
     character_data = detect_characters(words)
-    setting_data = detect_setting(words)
+    setting_data = detect_settings(words)
+    theme_data = detect_themes(words)
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
         "characters": character_data,
         "settings": setting_data,
+        "themes": theme_data,
         "the_count": text.count("the")
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
@@ -198,6 +221,13 @@ if st.button("Analyze the Story"):
                     st.write("- " + setting)
 
                 st.write("Total Settings:", value["count"])
+
+            elif name == "themes":
+                st.write("Themes Detected:")
+                for theme in value["names"]:
+                    st.write("- " + theme)
+
+                st.write("Total Themes:", value["count"])
 
             else:
                 st.write(name + ":" + str(value))
