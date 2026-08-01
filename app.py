@@ -184,6 +184,29 @@ def detect_obstacles(words):
 
     return obstacle_data
 
+def detect_tones(words):
+    tone_keywords = {
+        "dark": ["death", "murder", "blood", "revenge"],
+        "comedic": ["funny", "laugh", "joke", "humor"],
+        "romantic": ["love", "kiss", "romance"],
+        "inspirational": ["hope", "dream", "believe", "inspire"]
+    }
+
+    tones_found = set()
+
+    for word in words:
+        for tone, keywords in tone_keywords.items():
+            if word in keywords:
+                tones_found.add(tone)
+
+    tone_data = {
+        "found": len(tones_found) > 0,
+        "names": tones_found,
+        "count": len(tones_found)
+    }
+
+    return tone_data
+
 def detect_story_structure(words):
     character_data = detect_characters(words)
     setting_data = detect_settings(words)
@@ -191,6 +214,7 @@ def detect_story_structure(words):
     goal_data = detect_goals(words)
     stake_data = detect_stakes(words)
     obstacle_data = detect_obstacles(words)
+    tone_data = detect_tones(words)
 
     story_structure = {
         "characters": character_data,
@@ -198,7 +222,8 @@ def detect_story_structure(words):
         "themes": theme_data,
         "goals": goal_data,
         "stakes": stake_data,
-        "obstacles": obstacle_data
+        "obstacles": obstacle_data,
+        "tones": tone_data
     }
 
     return story_structure
@@ -346,6 +371,15 @@ if st.button("Analyze the Story"):
                     st.write("- " + obstacle)
 
                 st.write("Total Obstacles:", obstacles["count"])
+
+                tones = value["tones"]
+
+                st.write("Tones Detected:")
+
+                for tone in tones["names"]:
+                    st.write("- " + tone)
+
+                st.write("Total Tones:", tones["count"])
 
             else:
                 st.write(name + ":" + str(value))
