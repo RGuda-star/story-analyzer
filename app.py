@@ -207,6 +207,32 @@ def detect_tones(words):
 
     return tone_data
 
+def detect_genres(words):
+    genre_keywords = {
+        "action": ["fight", "battle", "gun", "explosion"],
+        "thriller": ["mystery", "secret", "investigation", "killer"],
+        "romance": ["love", "kiss", "romance"],
+        "comedy": ["funny", "laugh", "joke"],
+        "drama": ["family", "emotion", "relationship"],
+        "horror": ["ghost", "haunted", "demon", "monster"],
+        "sci-fi": ["robot", "alien", "future", "space"]
+    }
+
+    genres_found = set()
+
+    for word in words:
+        for genre, keywords in genre_keywords.items():
+            if word in keywords:
+                genres_found.add(genre)
+
+    genre_data = {
+        "found": len(genres_found) > 0,
+        "names": genres_found,
+        "count": len(genres_found)
+    }
+
+    return genre_data
+
 def detect_story_structure(words):
     character_data = detect_characters(words)
     setting_data = detect_settings(words)
@@ -215,6 +241,7 @@ def detect_story_structure(words):
     stake_data = detect_stakes(words)
     obstacle_data = detect_obstacles(words)
     tone_data = detect_tones(words)
+    genre_data = detect_genres(words)
 
     story_structure = {
         "characters": character_data,
@@ -223,7 +250,8 @@ def detect_story_structure(words):
         "goals": goal_data,
         "stakes": stake_data,
         "obstacles": obstacle_data,
-        "tones": tone_data
+        "tones": tone_data,
+        "genres": genre_data
     }
 
     return story_structure
@@ -380,6 +408,15 @@ if st.button("Analyze the Story"):
                     st.write("- " + tone)
 
                 st.write("Total Tones:", tones["count"])
+
+                genres = value["genres"]
+
+                st.write("Genres Detected:")
+
+                for genre in genres["names"]:
+                    st.write("- " + genre)
+
+                st.write("Total Genres:", genres["count"])
 
             else:
                 st.write(name + ":" + str(value))
