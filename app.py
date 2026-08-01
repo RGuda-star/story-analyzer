@@ -138,17 +138,42 @@ def detect_goals(words):
 
     return goal_data
 
+def detect_stakes(words):
+    stake_keywords = {
+    "life": ["death", "kill", "murder", "die"],
+    "family": ["family", "mother", "father", "sister", "brother"],
+    "freedom": ["prison", "capture", "escape"],
+    "world": ["world", "nation", "planet"],
+    "reputation": ["honor", "respect", "fame"]
+    }
+
+    stakes_found = set()
+    for word in words:
+        for stake, keywords in stake_keywords.items():
+            if word in keywords:
+                stakes_found.add(stake)
+
+    stake_data = {
+        "found": len(stakes_found) > 0,
+        "names": stakes_found,
+        "count": len(stakes_found)
+    }
+
+    return stake_data
+
 def detect_story_structure(words):
     character_data = detect_characters(words)
     setting_data = detect_settings(words)
     theme_data = detect_themes(words)
     goal_data = detect_goals(words)
+    stake_data = detect_stakes(words)
 
     story_structure = {
         "characters": character_data,
         "settings": setting_data,
         "themes": theme_data,
-        "goals": goal_data
+        "goals": goal_data,
+        "stakes": stake_data
     }
 
     return story_structure
