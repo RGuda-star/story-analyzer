@@ -161,19 +161,44 @@ def detect_stakes(words):
 
     return stake_data
 
+def detect_obstacles(words):
+    obstacle_keywords = {
+        "person": ["enemy", "villain", "killer"],
+        "society": ["law", "government", "police"],
+        "nature": ["storm", "earthquake", "fire"],
+        "internal": ["fear", "doubt", "guilt"]
+    }
+
+    obstacles_found = set()
+
+    for word in words:
+        for obstacle, keywords in obstacle_keywords.items():
+            if word in keywords:
+                obstacles_found.add(obstacle)
+
+    obstacle_data = {
+        "found": len(obstacles_found) > 0,
+        "names": obstacles_found,
+        "count": len(obstacles_found)
+    }
+
+    return obstacle_data
+
 def detect_story_structure(words):
     character_data = detect_characters(words)
     setting_data = detect_settings(words)
     theme_data = detect_themes(words)
     goal_data = detect_goals(words)
     stake_data = detect_stakes(words)
+    obstacle_data = detect_obstacles(words)
 
     story_structure = {
         "characters": character_data,
         "settings": setting_data,
         "themes": theme_data,
         "goals": goal_data,
-        "stakes": stake_data
+        "stakes": stake_data,
+        "obstacles": obstacle_data
     }
 
     return story_structure
@@ -312,6 +337,15 @@ if st.button("Analyze the Story"):
                     st.write("- " + stake)
 
                 st.write("Total Stakes:", stakes["count"])
+
+                obstacles = value["obstacles"]
+
+                st.write("Obstacles Detected:")
+
+                for obstacle in obstacles["names"]:
+                    st.write("- " + obstacle)
+
+                st.write("Total Obstacles:", obstacles["count"])
 
             else:
                 st.write(name + ":" + str(value))
