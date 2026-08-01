@@ -304,6 +304,15 @@ if st.button("Analyze the Story"):
 
                 st.write("Total Goals:", goals["count"])
 
+                stakes = value["stakes"]
+
+                st.write("Stakes Detected:")
+
+                for stake in stakes["names"]:
+                    st.write("- " + stake)
+
+                st.write("Total Stakes:", stakes["count"])
+
             else:
                 st.write(name + ":" + str(value))
         
