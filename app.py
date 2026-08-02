@@ -232,6 +232,30 @@ def detect_genres(words):
     }
 
     return genre_data
+def detect_story_elements(words):
+    element_keywords = {
+        "flashback": ["flashback", "past", "childhood"],
+        "twist": ["twist", "reveal", "truth", "secret"],
+        "climax": ["final", "climax", "showdown"],
+        "investigation": ["investigate", "clue", "evidence"],
+        "training": ["train", "training", "mentor"],
+        "rescue": ["rescue", "save", "hostage"]
+    }
+
+    elements_found = set()
+
+    for word in words:
+        for element, keywords in element_keywords.items():
+            if word in keywords:
+                elements_found.add(element)
+
+    element_data = {
+        "found": len(elements_found) > 0,
+        "names": elements_found,
+        "count": len(elements_found)
+    }
+
+    return element_data
 
 def detect_story_structure(words):
     character_data = detect_characters(words)
@@ -242,6 +266,7 @@ def detect_story_structure(words):
     obstacle_data = detect_obstacles(words)
     tone_data = detect_tones(words)
     genre_data = detect_genres(words)
+    story_element_data = detect_story_elements(words)
 
     story_structure = {
         "characters": character_data,
@@ -251,7 +276,8 @@ def detect_story_structure(words):
         "stakes": stake_data,
         "obstacles": obstacle_data,
         "tones": tone_data,
-        "genres": genre_data
+        "genres": genre_data,
+        "story-elements": story_element_data
     }
 
     return story_structure
@@ -417,6 +443,15 @@ if st.button("Analyze the Story"):
                     st.write("- " + genre)
 
                 st.write("Total Genres:", genres["count"])
+
+                story_elements = value["story-elements"]
+
+                st.write("Story Elements Detected:")
+
+                for element in story_elements["names"]:
+                    st.write("- " + element)
+
+                st.write("Total Story Elements:", story_elements["count"])
 
             else:
                 st.write(name + ":" + str(value))
