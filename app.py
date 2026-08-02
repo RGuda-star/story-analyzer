@@ -397,6 +397,15 @@ def explain_score(features, emotion_found, conflict_found):
 
     if features["max_repetition"] > 10:
         explanations.append("Repeated words lowered the score")
+    
+    if features["completeness_score"] >= 7:
+        explanations.append("A well-developed story structure significantly improved the score.")
+
+    elif features["completeness_score"] >= 4:
+        explanations.append("A moderately complete story structure improved the score.")
+
+    else:
+        explanations.append("Adding more core story elements could improve the score.")
 
     return explanations
 
