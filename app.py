@@ -277,7 +277,7 @@ def detect_story_structure(words):
         "obstacles": obstacle_data,
         "tones": tone_data,
         "genres": genre_data,
-        "story-elements": story_element_data
+        "story_elements": story_element_data
     }
 
     return story_structure
@@ -320,6 +320,53 @@ def generate_feedback(emotion_found, conflict_found):
         suggestions.append("Strong conflict detected")
     return strengths, suggestions
 
+def evaluate_story_structure(story_structure):
+    strengths = []
+    suggestions = []
+    if story_structure["goals"]["found"]:
+        strengths.append("The story has a clear goal.")
+    else:
+        suggestions.append("Consider giving the protagonist a stronger goal.")
+    if story_structure["obstacles"]["found"]:
+        strengths.append("The story contains meaningful obstacles.")
+    else:
+        suggestions.append("Consider adding obstacles for the protagonist.")
+    if story_structure["settings"]["found"]:
+        strengths.append("The story has an identifiable setting.")
+    else:
+        suggestions.append("Consider establishing where the story takes place.")
+    if story_structure["characters"]["found"]:
+        strengths.append("The story has identifiable characters.")
+    else:
+        suggestions.append("Consider adding more identifiable characters.")
+    if story_structure["stakes"]["found"]:
+        strengths.append("The story contains high stakes")
+    else:
+        suggestions.append("Consider adding more stakes to the conflict.")
+    return strengths, suggestions
+
+def calculate_story_completeness(story_structure):
+    score = 0
+    if story_structure["characters"]["found"]:
+        score += 1
+    if story_structure["settings"]["found"]:
+        score += 1
+    if story_structure["goals"]["found"]:
+        score += 1
+    if story_structure["obstacles"]["found"]:
+        score += 1
+    if story_structure["stakes"]["found"]:
+        score += 1
+    if story_structure["themes"]["found"]:
+        score += 1
+    if story_structure["genres"]["found"]:
+        score += 1
+    if story_structure["tones"]["found"]:
+        score += 1
+    if story_structure["story_elements"]["found"]:
+        score += 1
+
+
 def explain_score(features, emotion_found, conflict_found):
     explanations = []
 
@@ -344,6 +391,8 @@ def analyze_story_features(text):
     emotion_found= detect_emotion(words)
     conflict_found = detect_conflict(words)
     story_structure = detect_story_structure(words)
+    structure_strengths, structure_suggestions = evaluate_story_structure(story_structure)
+
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
@@ -354,6 +403,8 @@ def analyze_story_features(text):
     score = calculate_score(features, text, emotion_found, conflict_found)
     
     strengths, suggestions = generate_feedback(emotion_found, conflict_found)
+    strengths.extend(structure_strengths)
+    suggestions.extend(structure_suggestions)
     explanations = explain_score(features, emotion_found, conflict_found)
     
 
@@ -444,7 +495,7 @@ if st.button("Analyze the Story"):
 
                 st.write("Total Genres:", genres["count"])
 
-                story_elements = value["story-elements"]
+                story_elements = value["story_elements"]
 
                 st.write("Story Elements Detected:")
 
