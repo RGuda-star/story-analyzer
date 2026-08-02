@@ -304,7 +304,12 @@ def calculate_score(features, text, emotion_found, conflict_found):
 
     if conflict_found:
         score += 2
+    score += features["completeness_score"] * 2
+    if score > 100:
+        score = 100
 
+    if score < 0:
+        score = 0
     return score
 
 def generate_feedback(emotion_found, conflict_found):
@@ -365,6 +370,17 @@ def calculate_story_completeness(story_structure):
         score += 1
     if story_structure["story_elements"]["found"]:
         score += 1
+    if score <= 2:
+        rating = "Weak"
+    elif score <= 4:
+        rating = "Basic"
+    elif score <= 6:
+        rating = "Good"
+    elif score <= 8:
+        rating = "Strong"
+    else:
+        rating = "Excellent"
+    return score, rating
 
 
 def explain_score(features, emotion_found, conflict_found):
@@ -392,13 +408,16 @@ def analyze_story_features(text):
     conflict_found = detect_conflict(words)
     story_structure = detect_story_structure(words)
     structure_strengths, structure_suggestions = evaluate_story_structure(story_structure)
+    completeness_score, completeness_rating = calculate_story_completeness(story_structure)
 
     features.update({
         "word_count": len(words),
         "emotion_found": emotion_found,
         "conflict_found": conflict_found,
         "story_structure": story_structure,
-        "the_count": text.count("the")
+        "the_count": text.count("the"),
+        "completeness_score": completeness_score,
+        "completeness_rating": completeness_rating
     })
     score = calculate_score(features, text, emotion_found, conflict_found)
     
