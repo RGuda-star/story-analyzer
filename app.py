@@ -446,8 +446,14 @@ if st.button("Analyze the Story"):
         st.warning("Please paste a story first.")
     else:
         score, strengths, suggestions, features, explanations = analyze_story_features(story)
-        st.metric("Score", score)
-        st.write("Features:")
+        st.metric("Overall Score", score)
+
+        st.subheader("Story Completeness")
+        st.write(
+            f'{features["completeness_score"]}/9 ({features["completeness_rating"]})'
+        )
+
+        st.subheader("Extracted Features")
         for name, value in features.items():
             if name == "story_structure":
 
